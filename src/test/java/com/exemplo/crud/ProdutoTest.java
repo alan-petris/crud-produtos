@@ -3,8 +3,10 @@ package com.exemplo.crud;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProdutoTest {
     @Test
@@ -45,4 +47,5 @@ public class ProdutoTest {
 
         assertEquals(5, quantidadeGabinete);
     }
+
 }

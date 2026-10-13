@@ -3,9 +3,12 @@ package com.exemplo.crud;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProdutoServiceTest {
     @Test
@@ -76,5 +79,61 @@ public class ProdutoServiceTest {
 
         Produto computador = produtoService.cadastrar("Computador", new BigDecimal("2000"));
         assertEquals(1L, computador.getId());
+    }
+
+    // TESTES DE BUSCAR PRODUTOS
+
+    @Test
+    public void deveBuscarProdutoPeloId(){
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
+        Produto produto2 = produtoService.cadastrar("produto 2", new BigDecimal("100"));
+        Produto produto3 = produtoService.cadastrar("produto 3", new BigDecimal("200"));
+
+        assertEquals(Optional.of(produto1), produtoService.buscarProdutoID(1L));
+    }
+
+    @Test
+    public void deveBuscarIdInexistente(){
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
+        assertEquals(Optional.empty(),produtoService.buscarProdutoID(100L));
+    }
+    @Test
+    public void deveBuscarEmListaVazia(){
+        ProdutoService produtoService = new ProdutoService();
+        assertEquals(Optional.empty(), produtoService.buscarProdutoID(1L));
+    }
+
+    // TESTE DE LISTAR TODOS
+    @Test
+    public void deveRetornarTodos(){
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
+        Produto produto2 = produtoService.cadastrar("produto 2", new BigDecimal("100"));
+        Produto produto3 = produtoService.cadastrar("produto 3", new BigDecimal("200"));
+
+        List<Produto> todos = produtoService.listarTodos();
+        assertEquals(3, todos.size());
+        assertSame(produto1, produtoService.listarTodos().get(0));
+        assertSame(produto2, produtoService.listarTodos().get(1));
+        assertSame(produto3, produtoService.listarTodos().get(2));
+    }
+    @Test
+    public void deveTestarListaVazia(){
+        ProdutoService produtoService = new ProdutoService();
+        assertTrue(produtoService.listarTodos().isEmpty());
+    }
+    @Test
+    public void deveTestarModificacaoExterna(){
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
+        Produto produto2 = new Produto(2L, "produto2", new BigDecimal("30"), 1);
+
+        List<Produto> todos = produtoService.listarTodos();
+
+        assertThrows(UnsupportedOperationException.class, () -> todos.add(produto2));
+
+        assertEquals(1, todos.size());
     }
 }
