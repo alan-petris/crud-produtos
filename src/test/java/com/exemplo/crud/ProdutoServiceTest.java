@@ -1,5 +1,6 @@
 package com.exemplo.crud;
 
+import com.exemplo.crud.exception.DadosInvalidosException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -36,50 +37,49 @@ public class ProdutoServiceTest {
     public void deveLancarExcecaoQuandoNomeForNulo() {
         ProdutoService produtoService = new ProdutoService();
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar(null, new BigDecimal("100")));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        DadosInvalidosException excecao = assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar(null, new BigDecimal("100")));
+        assertEquals("Nome inválido !", excecao.getMessage());
     }
 
     @Test
     public void deveLancarExcecaoQuandoNomeForVazio() {
         ProdutoService produtoService = new ProdutoService();
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("", new BigDecimal("50")));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        DadosInvalidosException excecao = assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar("", new BigDecimal("50")));
+        assertEquals("Nome inválido !", excecao.getMessage());
     }
 
     @Test
     public void deveLancarExcecaoQuandoNomeEstiverEmBranco() {
         ProdutoService produtoService = new ProdutoService();
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("    ", new BigDecimal("500")));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        DadosInvalidosException excecao = assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar("    ", new BigDecimal("500")));
+        assertEquals("Nome inválido !", excecao.getMessage());
     }
 
     @Test
     public void deveLancarExcecaoQuandoPrecoForNulo() {
         ProdutoService produtoService = new ProdutoService();
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("mouse", null));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        DadosInvalidosException excecao = assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar("mouse", null));
+        assertEquals("Preço inválido !", excecao.getMessage());
     }
 
     @Test
     public void deveLancarExcecaoQuandoPrecoForZero() {
         ProdutoService produtoService = new ProdutoService();
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("Monitor", BigDecimal.ZERO));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        DadosInvalidosException excecao = assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar("Monitor", BigDecimal.ZERO));
+        assertEquals("Preço inválido !", excecao.getMessage());
     }
 
     @Test
     public void deveLancarExcecaoQuandoPrecoForMenorQueZero() {
         ProdutoService produtoService = new ProdutoService();
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("Fruta", new BigDecimal("-50")));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        DadosInvalidosException excecao = assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar("Fruta", new BigDecimal("-50")));
+        assertEquals("Preço inválido !", excecao.getMessage());
     }
 
     @Test
     public void naoDeveConsumirIdQuandoCadastroForInvalido() {
         ProdutoService produtoService = new ProdutoService();
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("", new BigDecimal("0")));
-        assertEquals("Argumento inválido !", excecao.getMessage());
+        assertThrows(DadosInvalidosException.class, () -> produtoService.cadastrar("", new BigDecimal("0")));
 
         Produto computador = produtoService.cadastrar("Computador", new BigDecimal("2000"));
         assertEquals(1L, computador.getId());
@@ -95,19 +95,25 @@ public class ProdutoServiceTest {
         Produto produto3 = produtoService.cadastrar("produto 3", new BigDecimal("200"));
 
         assertEquals(Optional.of(produto1), produtoService.buscarProdutoID(1L));
+        assertEquals(Optional.of(produto2), produtoService.buscarProdutoID(2L));
+        assertEquals(Optional.of(produto3), produtoService.buscarProdutoID(3L));
     }
 
     @Test
-    public void deveBuscarIdInexistente() {
+    public void deveRetornarEmptyOptionalAoBuscarIdInexistente() {
         ProdutoService produtoService = new ProdutoService();
-        Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
-        assertEquals(Optional.empty(), produtoService.buscarProdutoID(100L));
+        produtoService.cadastrar("produto 1", new BigDecimal("50"));
+        Long idInexistente = 100L;
+        Optional<Produto> result = produtoService.buscarProdutoID(idInexistente);
+        assertTrue(result.isEmpty());
     }
 
     @Test
     public void deveBuscarEmListaVazia() {
-        ProdutoService produtoService = new ProdutoService();
-        assertEquals(Optional.empty(), produtoService.buscarProdutoID(1L));
+        ProdutoService produtoServiceVazia = new ProdutoService();
+        Long qualquerId = 1L;
+        Optional<Produto> result = produtoServiceVazia.buscarProdutoID(qualquerId);
+        assertTrue(result.isEmpty(), "O resultado deve ser vazio quando não tem produtos registrados");
     }
 
     // TESTE DE LISTAR TODOS
@@ -181,16 +187,16 @@ public class ProdutoServiceTest {
         ProdutoService produtoService = new ProdutoService();
         produtoService.cadastrar("produto1", new BigDecimal("50.00"));
 
-        IllegalArgumentException excecaoPrecoZero = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "a", new BigDecimal("0")));
+        DadosInvalidosException excecaoPrecoZero = assertThrows(DadosInvalidosException.class, () -> produtoService.atualizar(1L, "a", new BigDecimal("0")));
         assertEquals("Preço inválido !", excecaoPrecoZero.getMessage());
 
-        IllegalArgumentException excecaoPrecoNegativo = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "a", new BigDecimal("-10")));
+        DadosInvalidosException excecaoPrecoNegativo = assertThrows(DadosInvalidosException.class, () -> produtoService.atualizar(1L, "a", new BigDecimal("-10")));
         assertEquals("Preço inválido !", excecaoPrecoNegativo.getMessage());
 
-        IllegalArgumentException excecaoNomeVazio = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "", new BigDecimal("10")));
+        DadosInvalidosException excecaoNomeVazio = assertThrows(DadosInvalidosException.class, () -> produtoService.atualizar(1L, "", new BigDecimal("10")));
         assertEquals("Nome inválido !", excecaoNomeVazio.getMessage());
 
-        IllegalArgumentException excecaoIdInvalido = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(null, "teste", new BigDecimal("50")));
+        DadosInvalidosException excecaoIdInvalido = assertThrows(DadosInvalidosException.class, () -> produtoService.atualizar(null, "teste", new BigDecimal("50")));
         assertEquals("Id inválido !", excecaoIdInvalido.getMessage());
     }
 
@@ -202,16 +208,16 @@ public class ProdutoServiceTest {
         assertEquals("Novo", produto.getNome());
         assertTrue(produtoService.remover(1L));
         assertFalse(produtoService.remover(2L));
-        IllegalArgumentException idNulo = assertThrows(IllegalArgumentException.class, () -> produtoService.remover(null));
+        DadosInvalidosException idNulo = assertThrows(DadosInvalidosException.class, () -> produtoService.remover(null));
         assertEquals("Id inválido !", idNulo.getMessage());
 
     }
 
     @Test
-    public void deveEnviarIllegalArgumentExceptionAoReceberIdNulo() {
+    public void deveEnviarDadosInvalidosExceptionAoReceberIdNulo() {
         ProdutoService produtoService = new ProdutoService();
         produtoService.cadastrar("Novo", new BigDecimal("50"));
-        IllegalArgumentException idNulo = assertThrows(IllegalArgumentException.class, () -> produtoService.remover(null));
+        DadosInvalidosException idNulo = assertThrows(DadosInvalidosException.class, () -> produtoService.remover(null));
         assertEquals("Id inválido !", idNulo.getMessage());
     }
 

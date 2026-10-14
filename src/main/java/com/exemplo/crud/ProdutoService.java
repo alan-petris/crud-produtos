@@ -1,8 +1,9 @@
 package com.exemplo.crud;
 
+import com.exemplo.crud.exception.DadosInvalidosException;
+
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ProdutoService {
     private List<Produto> produtos = new ArrayList<>();
@@ -11,10 +12,10 @@ public class ProdutoService {
 
     public Produto cadastrar(String nome, BigDecimal preco) {
         if (preco == null || preco.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Argumento inválido !");
+            throw new DadosInvalidosException("Preço inválido !");
         }
         if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("Argumento inválido !");
+            throw new DadosInvalidosException("Nome inválido !");
         }
         id++;
         Produto novo = new Produto(id, nome, preco, 1);
@@ -34,13 +35,13 @@ public class ProdutoService {
 
     public boolean atualizar(Long id, String nome, BigDecimal preco) {
         if(id == null){
-            throw new IllegalArgumentException("Id inválido !");
+            throw new DadosInvalidosException("Id inválido !");
         }
         if (nome == null || nome.isBlank()){
-            throw new IllegalArgumentException("Nome inválido !");
+            throw new DadosInvalidosException("Nome inválido !");
         }
         if (preco == null || preco.compareTo(BigDecimal.ZERO) <=0){
-            throw new IllegalArgumentException("Preço inválido !");
+            throw new DadosInvalidosException("Preço inválido !");
         }
         Optional<Produto> produtoOptional = produtos.stream()
                 .filter(produto -> produto.getId().equals(id))
@@ -53,7 +54,7 @@ public class ProdutoService {
     }
     public boolean remover(Long id){
         if (id == null){
-            throw new IllegalArgumentException("Id inválido !");
+            throw new DadosInvalidosException("Id inválido !");
         }
         return produtos.removeIf((p) -> p.getId().equals(id));
     }
