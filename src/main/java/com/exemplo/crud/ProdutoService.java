@@ -51,4 +51,10 @@ public class ProdutoService {
         });
         return produtoOptional.isPresent();
     }
+    public boolean remover(Long id){
+        if (id == null){
+            throw new IllegalArgumentException("Id inválido !");
+        }
+        return produtos.removeIf((p) -> p.getId().equals(id));
+    }
 }

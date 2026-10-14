@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProdutoServiceTest {
     @Test
-    public void deveCadastrarProdutoComDadosValidos(){
+    public void deveCadastrarProdutoComDadosValidos() {
         ProdutoService produtoService = new ProdutoService();
 
         Produto geladeira = produtoService.cadastrar("Geladeira", new BigDecimal("100.00"));
@@ -24,7 +24,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void deveGerarIdsSequenciaisAoCadastrarProdutos(){
+    public void deveGerarIdsSequenciaisAoCadastrarProdutos() {
         ProdutoService produtoService = new ProdutoService();
         Produto carro = produtoService.cadastrar("Carro", new BigDecimal("1000"));
         Produto aviao = produtoService.cadastrar("Avião", new BigDecimal("50000"));
@@ -33,46 +33,50 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void deveLancarExcecaoQuandoNomeForNulo(){
+    public void deveLancarExcecaoQuandoNomeForNulo() {
         ProdutoService produtoService = new ProdutoService();
 
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class,() -> produtoService.cadastrar(null, new BigDecimal("100")));
+        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar(null, new BigDecimal("100")));
         assertEquals("Argumento inválido !", excecao.getMessage());
     }
 
     @Test
-    public void deveLancarExcecaoQuandoNomeForVazio(){
+    public void deveLancarExcecaoQuandoNomeForVazio() {
         ProdutoService produtoService = new ProdutoService();
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("", new BigDecimal("50")));
         assertEquals("Argumento inválido !", excecao.getMessage());
     }
 
     @Test
-    public void deveLancarExcecaoQuandoNomeEstiverEmBranco(){
+    public void deveLancarExcecaoQuandoNomeEstiverEmBranco() {
         ProdutoService produtoService = new ProdutoService();
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("    ", new BigDecimal("500")));
         assertEquals("Argumento inválido !", excecao.getMessage());
     }
+
     @Test
-    public void deveLancarExcecaoQuandoPrecoForNulo(){
+    public void deveLancarExcecaoQuandoPrecoForNulo() {
         ProdutoService produtoService = new ProdutoService();
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("mouse", null));
         assertEquals("Argumento inválido !", excecao.getMessage());
     }
+
     @Test
-    public void deveLancarExcecaoQuandoPrecoForZero(){
+    public void deveLancarExcecaoQuandoPrecoForZero() {
         ProdutoService produtoService = new ProdutoService();
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("Monitor", BigDecimal.ZERO));
         assertEquals("Argumento inválido !", excecao.getMessage());
     }
+
     @Test
-    public void deveLancarExcecaoQuandoPrecoForMenorQueZero(){
+    public void deveLancarExcecaoQuandoPrecoForMenorQueZero() {
         ProdutoService produtoService = new ProdutoService();
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("Fruta", new BigDecimal("-50")));
         assertEquals("Argumento inválido !", excecao.getMessage());
     }
+
     @Test
-    public void naoDeveConsumirIdQuandoCadastroForInvalido(){
+    public void naoDeveConsumirIdQuandoCadastroForInvalido() {
         ProdutoService produtoService = new ProdutoService();
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, () -> produtoService.cadastrar("", new BigDecimal("0")));
         assertEquals("Argumento inválido !", excecao.getMessage());
@@ -84,7 +88,7 @@ public class ProdutoServiceTest {
     // TESTES DE BUSCAR PRODUTOS
 
     @Test
-    public void deveBuscarProdutoPeloId(){
+    public void deveBuscarProdutoPeloId() {
         ProdutoService produtoService = new ProdutoService();
         Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
         Produto produto2 = produtoService.cadastrar("produto 2", new BigDecimal("100"));
@@ -94,20 +98,21 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void deveBuscarIdInexistente(){
+    public void deveBuscarIdInexistente() {
         ProdutoService produtoService = new ProdutoService();
         Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
-        assertEquals(Optional.empty(),produtoService.buscarProdutoID(100L));
+        assertEquals(Optional.empty(), produtoService.buscarProdutoID(100L));
     }
+
     @Test
-    public void deveBuscarEmListaVazia(){
+    public void deveBuscarEmListaVazia() {
         ProdutoService produtoService = new ProdutoService();
         assertEquals(Optional.empty(), produtoService.buscarProdutoID(1L));
     }
 
     // TESTE DE LISTAR TODOS
     @Test
-    public void deveRetornarTodos(){
+    public void deveRetornarTodos() {
         ProdutoService produtoService = new ProdutoService();
         Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
         Produto produto2 = produtoService.cadastrar("produto 2", new BigDecimal("100"));
@@ -119,13 +124,15 @@ public class ProdutoServiceTest {
         assertSame(produto2, produtoService.listarTodos().get(1));
         assertSame(produto3, produtoService.listarTodos().get(2));
     }
+
     @Test
-    public void deveTestarListaVazia(){
+    public void deveTestarListaVazia() {
         ProdutoService produtoService = new ProdutoService();
         assertTrue(produtoService.listarTodos().isEmpty());
     }
+
     @Test
-    public void deveTestarModificacaoExterna(){
+    public void deveTestarModificacaoExterna() {
         ProdutoService produtoService = new ProdutoService();
         Produto produto1 = produtoService.cadastrar("produto 1", new BigDecimal("50"));
         Produto produto2 = new Produto(2L, "produto2", new BigDecimal("30"), 1);
@@ -136,9 +143,10 @@ public class ProdutoServiceTest {
 
         assertEquals(1, todos.size());
     }
+
     // METODO ATUALIZAR
     @Test
-    public void deveAtualizarProduto(){
+    public void deveAtualizarProduto() {
         ProdutoService produtoService = new ProdutoService();
 
         Produto produto1 = produtoService.cadastrar("produto1", new BigDecimal("50.00"));
@@ -157,7 +165,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void deveRetornarFalseAoAtualizarProdutoInexistente(){
+    public void deveRetornarFalseAoAtualizarProdutoInexistente() {
         ProdutoService produtoService = new ProdutoService();
         Produto produto1 = produtoService.cadastrar("produto1", new BigDecimal("50.00"));
 
@@ -169,14 +177,14 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void deveLancarExcecaoAoAtualizarComDadosInvalidos(){
+    public void deveLancarExcecaoAoAtualizarComDadosInvalidos() {
         ProdutoService produtoService = new ProdutoService();
         produtoService.cadastrar("produto1", new BigDecimal("50.00"));
 
-        IllegalArgumentException excecaoPrecoZero = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L,"a", new BigDecimal("0")));
+        IllegalArgumentException excecaoPrecoZero = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "a", new BigDecimal("0")));
         assertEquals("Preço inválido !", excecaoPrecoZero.getMessage());
 
-        IllegalArgumentException excecaoPrecoNegativo = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L,"a", new BigDecimal("-10")));
+        IllegalArgumentException excecaoPrecoNegativo = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "a", new BigDecimal("-10")));
         assertEquals("Preço inválido !", excecaoPrecoNegativo.getMessage());
 
         IllegalArgumentException excecaoNomeVazio = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "", new BigDecimal("10")));
@@ -184,6 +192,48 @@ public class ProdutoServiceTest {
 
         IllegalArgumentException excecaoIdInvalido = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(null, "teste", new BigDecimal("50")));
         assertEquals("Id inválido !", excecaoIdInvalido.getMessage());
+    }
+
+    //METODO REMOVER
+    @Test
+    public void deveRemoverProduto() {
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto = produtoService.cadastrar("Novo", new BigDecimal("50"));
+        assertEquals("Novo", produto.getNome());
+        assertTrue(produtoService.remover(1L));
+        assertFalse(produtoService.remover(2L));
+        IllegalArgumentException idNulo = assertThrows(IllegalArgumentException.class, () -> produtoService.remover(null));
+        assertEquals("Id inválido !", idNulo.getMessage());
+
+    }
+
+    @Test
+    public void deveEnviarIllegalArgumentExceptionAoReceberIdNulo() {
+        ProdutoService produtoService = new ProdutoService();
+        produtoService.cadastrar("Novo", new BigDecimal("50"));
+        IllegalArgumentException idNulo = assertThrows(IllegalArgumentException.class, () -> produtoService.remover(null));
+        assertEquals("Id inválido !", idNulo.getMessage());
+    }
+
+    @Test
+    public void deveRetornarFalseAoReceberIdQueNaoPossui() {
+        ProdutoService produtoService = new ProdutoService();
+        produtoService.cadastrar("Novo", new BigDecimal("50"));
+        assertFalse(produtoService.remover(5L));
+    }
+
+    @Test
+    public void devePreservarProdutosQueNaoForamRemovidos(){
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto1 = produtoService.cadastrar("produto1", new BigDecimal("50"));
+        Produto produto2 = produtoService.cadastrar("produto2", new BigDecimal("100"));
+        Produto produto3 = produtoService.cadastrar("produto3", new BigDecimal("150"));
+        boolean removido = produtoService.remover(1L);
+        assertTrue(removido);
+        assertEquals(2, produtoService.listarTodos().size());
+        assertFalse(produtoService.listarTodos().contains(produto1));
+        assertTrue(produtoService.listarTodos().contains(produto2));
+        assertTrue(produtoService.listarTodos().contains(produto3));
     }
 
 
