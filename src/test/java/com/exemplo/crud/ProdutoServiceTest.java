@@ -136,4 +136,55 @@ public class ProdutoServiceTest {
 
         assertEquals(1, todos.size());
     }
+    // METODO ATUALIZAR
+    @Test
+    public void deveAtualizarProduto(){
+        ProdutoService produtoService = new ProdutoService();
+
+        Produto produto1 = produtoService.cadastrar("produto1", new BigDecimal("50.00"));
+        Long idOriginal = produto1.getId();
+        BigDecimal precoOriginal = produto1.getPreco();
+        int quantidadeProduto = produto1.getQuantidade();
+        boolean produtoAtualizado = produtoService.atualizar(1L, "produto2", new BigDecimal("200.00"));
+
+        assertEquals(idOriginal, produto1.getId());
+        assertEquals(new BigDecimal("50.00"), precoOriginal);
+        assertEquals("produto2", produto1.getNome());
+        assertEquals(new BigDecimal("200.00"), produto1.getPreco());
+        assertEquals(quantidadeProduto, produto1.getQuantidade());
+
+        assertTrue(produtoAtualizado);
+    }
+
+    @Test
+    public void deveRetornarFalseAoAtualizarProdutoInexistente(){
+        ProdutoService produtoService = new ProdutoService();
+        Produto produto1 = produtoService.cadastrar("produto1", new BigDecimal("50.00"));
+
+        boolean produtoAtualizado1 = produtoService.atualizar(2L, "AlteradoTeste", new BigDecimal("100.00"));
+
+        assertEquals("produto1", produto1.getNome());
+        assertEquals(new BigDecimal("50.00"), produto1.getPreco());
+        assertFalse(produtoAtualizado1);
+    }
+
+    @Test
+    public void deveLancarExcecaoAoAtualizarComDadosInvalidos(){
+        ProdutoService produtoService = new ProdutoService();
+        produtoService.cadastrar("produto1", new BigDecimal("50.00"));
+
+        IllegalArgumentException excecaoPrecoZero = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L,"a", new BigDecimal("0")));
+        assertEquals("Preço inválido !", excecaoPrecoZero.getMessage());
+
+        IllegalArgumentException excecaoPrecoNegativo = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L,"a", new BigDecimal("-10")));
+        assertEquals("Preço inválido !", excecaoPrecoNegativo.getMessage());
+
+        IllegalArgumentException excecaoNomeVazio = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(1L, "", new BigDecimal("10")));
+        assertEquals("Nome inválido !", excecaoNomeVazio.getMessage());
+
+        IllegalArgumentException excecaoIdInvalido = assertThrows(IllegalArgumentException.class, () -> produtoService.atualizar(null, "teste", new BigDecimal("50")));
+        assertEquals("Id inválido !", excecaoIdInvalido.getMessage());
+    }
+
+
 }
